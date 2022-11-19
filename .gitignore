@@ -27,3 +27,7 @@ go.work
 
 build/
 dist/
+
+.env
+.session
+inputs/

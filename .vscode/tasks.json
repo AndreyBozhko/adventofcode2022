@@ -4,9 +4,19 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "compile_linux",
+            "label": "get input for currently active day",
             "type": "shell",
-            "command": "go build -o aoc *.go",
+            "command": "go run cmd/* get -y 2021 -d $(echo ${file} | cut -d '_' -f 2 | cut -d '.' -f 1)",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "run solution for currently active day",
+            "type": "shell",
+            "command": "go run ${file}",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
