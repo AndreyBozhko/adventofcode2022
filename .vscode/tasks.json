@@ -14,9 +14,29 @@
             }
         },
         {
-            "label": "run solution for currently active day",
+            "label": "submit answer for currently active day",
             "type": "shell",
-            "command": "go run ${file}",
+            "command": "go run cmd/* submit -y 2021 -d $(echo ${file} | cut -d '_' -f 2 | cut -d '.' -f 1) -p $(cat .answer)",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "run solution for currently active day (part A)",
+            "type": "shell",
+            "command": "go run ${file} A",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "run solution for currently active day (part B)",
+            "type": "shell",
+            "command": "go run ${file} B",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
