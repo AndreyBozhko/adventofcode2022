@@ -1,43 +1,15 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
 )
 
-// Part is a problem part (A or B).
-type Part string
-
-const (
-	A Part = "A"
-	B Part = "B"
-)
-
-func (p Part) IsA() bool {
-	return p == A
-}
-
-func (p Part) IsB() bool {
-	return p == B
-}
-
-func ProblemPart() Part {
-	args := os.Args
-	if len(args) < 2 {
-		panic("Problem part is not provided")
-	}
-	part := Part(args[1])
-	if part == A || part == B {
-		return part
-	}
-
-	panic("Invalid part: " + part)
-}
-
 // Arbitrary is a generic type to use with the Must function.
 type Arbitrary interface {
-	~int | ~string | ~[]int | ~[]string
+	~int | ~string | ~[]int | ~[]string | *Problem
 }
 
 // Must returns the value if error is nil,
@@ -49,10 +21,37 @@ func Must[T Arbitrary](value T, err error) T {
 	return value
 }
 
-// Input loads the problem input for a specified day
-// from file as a string slice.
-func Input(year, day int) (lines []string, err error) {
-	path := fmt.Sprintf("inputs/%d/input%02d.txt", year, day)
+// Problem represents AoC problem part
+// for a given year and day.
+type Problem struct {
+	year, day int
+	part      string
+}
+
+func NewProblem(year, day int) (*Problem, error) {
+	args := os.Args
+	if len(args) < 2 {
+		return nil, errors.New("problem part is not provided via os.Args")
+	}
+	part := args[1]
+	if part == "A" || part == "B" {
+		return &Problem{year, day, part}, nil
+	}
+
+	return nil, fmt.Errorf("invalid part: %s", part)
+}
+
+func (p Problem) IsA() bool {
+	return p.part == "A"
+}
+
+func (p Problem) IsB() bool {
+	return p.part == "B"
+}
+
+// LoadInput loads the problem input from file into a string slice.
+func (p Problem) LoadInput() (lines []string, err error) {
+	path := fmt.Sprintf("inputs/%d/input%02d.txt", p.year, p.day)
 
 	bts, err := os.ReadFile(path)
 	if err != nil {
@@ -65,11 +64,9 @@ func Input(year, day int) (lines []string, err error) {
 }
 
 // Output prints the result to stdout and to '.answer' file.
-func Output(part Part, result string) {
-	fmt.Printf("Part %s: %s\n", part, result)
+func (p Problem) WriteOutput(result string) error {
+	fmt.Printf("Part %s: %s\n", p.part, result)
 
-	content := string(part) + " " + result
-	if err := os.WriteFile(".answer", []byte(content), 0644); err != nil {
-		panic(err)
-	}
+	content := p.part + " " + result
+	return os.WriteFile(".answer", []byte(content), 0644)
 }

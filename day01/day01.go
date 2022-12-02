@@ -44,19 +44,19 @@ func solveB(input []string) int {
 }
 
 func main() {
-	input := utils.Must(utils.Input(2022, 1))
-	part := utils.ProblemPart()
+	problem := utils.Must(utils.NewProblem(2022, 1))
+	input := utils.Must(problem.LoadInput())
 
 	input = append(input, "")
 
 	var result int
-	if part.IsA() {
+	if problem.IsA() {
 		result = solveA(input)
 	}
 
-	if part.IsB() {
+	if problem.IsB() {
 		result = solveB(input)
 	}
 
-	utils.Output(part, strconv.Itoa(result))
+	_ = problem.WriteOutput(strconv.Itoa(result))
 }
