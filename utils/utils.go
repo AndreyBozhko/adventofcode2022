@@ -41,16 +41,16 @@ func NewProblem(year, day int) (*Problem, error) {
 	return nil, fmt.Errorf("invalid part: %s", part)
 }
 
-func (p Problem) IsA() bool {
+func (p *Problem) IsA() bool {
 	return p.part == "A"
 }
 
-func (p Problem) IsB() bool {
+func (p *Problem) IsB() bool {
 	return p.part == "B"
 }
 
 // LoadInput loads the problem input from file into a string slice.
-func (p Problem) LoadInput() (lines []string, err error) {
+func (p *Problem) LoadInput() (lines []string, err error) {
 	path := fmt.Sprintf("inputs/%d/input%02d.txt", p.year, p.day)
 
 	bts, err := os.ReadFile(path)
@@ -64,7 +64,7 @@ func (p Problem) LoadInput() (lines []string, err error) {
 }
 
 // WriteOutput prints the result to stdout and to '.answer' file.
-func (p Problem) WriteOutput(result string) error {
+func (p *Problem) WriteOutput(result string) error {
 	fmt.Printf("Part %s: %s\n", p.part, result)
 
 	content := p.part + " " + result
