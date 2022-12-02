@@ -50,11 +50,11 @@ func main() {
 	input = append(input, "")
 
 	var result int
-	if part == utils.A {
+	if part.IsA() {
 		result = solveA(input)
 	}
 
-	if part == utils.B {
+	if part.IsB() {
 		result = solveB(input)
 	}
 

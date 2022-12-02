@@ -14,6 +14,14 @@ const (
 	B Part = "B"
 )
 
+func (p Part) IsA() bool {
+	return p == A
+}
+
+func (p Part) IsB() bool {
+	return p == B
+}
+
 func ProblemPart() Part {
 	args := os.Args
 	if len(args) < 2 {
