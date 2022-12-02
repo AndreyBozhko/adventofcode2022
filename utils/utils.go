@@ -63,7 +63,7 @@ func (p Problem) LoadInput() (lines []string, err error) {
 	return
 }
 
-// Output prints the result to stdout and to '.answer' file.
+// WriteOutput prints the result to stdout and to '.answer' file.
 func (p Problem) WriteOutput(result string) error {
 	fmt.Printf("Part %s: %s\n", p.part, result)
 
