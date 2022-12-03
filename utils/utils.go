@@ -9,7 +9,7 @@ import (
 
 // Arbitrary is a generic type to use with the Must function.
 type Arbitrary interface {
-	~int | ~string | ~[]int | ~[]string | *Problem
+	~int | ~string | ~[]int | ~[]string | ~rune | *Problem
 }
 
 // Must returns the value if error is nil,
