@@ -9,7 +9,7 @@ import (
 
 // Arbitrary is a generic type to use with the Must function.
 type Arbitrary interface {
-	~int | ~string | ~[]int | ~[]string | ~rune | *Problem
+	~int | ~byte | ~string | ~[]int | ~[]string | ~rune | *Problem
 }
 
 // Must returns the value if error is nil,
@@ -69,4 +69,11 @@ func (p *Problem) WriteOutput(result string) error {
 
 	content := p.part + " " + result
 	return os.WriteFile(".answer", []byte(content), 0644)
+}
+
+// ReverseSlice reverses given slice in place.
+func ReverseSlice[T Arbitrary](s []T) {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
 }
