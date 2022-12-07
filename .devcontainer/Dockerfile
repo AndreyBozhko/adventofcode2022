@@ -5,11 +5,11 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 RUN mkdir -p /home/${USERNAME}
-RUN groupadd ${USERNAME} -g ${USER_UID} && useradd -u ${USER_UID} -g ${USERNAME} ${USERNAME}
+RUN groupadd ${USERNAME} -g ${USER_UID} && useradd -l -u ${USER_UID} -g ${USERNAME} ${USERNAME}
 RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME}
 
 RUN apt-get update \
-    && apt-get install -y zsh less vim \
+    && apt-get install --no-install-recommends -y zsh less vim \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
