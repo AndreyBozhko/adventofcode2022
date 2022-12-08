@@ -6,7 +6,7 @@
         {
             "label": "get input for currently active day",
             "type": "shell",
-            "command": "go run cmd/* get -y 2022 -d $(echo ${file} | cut -d 'y' -f 3 | cut -d '.' -f 1)",
+            "command": "go run cmd/* get -y 2022 -d $(echo ${file} | sed 's/.*day0\\?\\([0-9]\\+\\).go/\\1/g')",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -16,7 +16,7 @@
         {
             "label": "submit answer for currently active day",
             "type": "shell",
-            "command": "go run cmd/* submit -y 2022 -d $(echo ${file} | cut -d 'y' -f 3 | cut -d '.' -f 1) -p $(cat .answer)",
+            "command": "go run cmd/* submit -y 2022 -d $(echo ${file} | sed 's/.*day0\\?\\([0-9]\\+\\).go/\\1/g') -p $(cat .answer)",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -42,6 +42,23 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "prepare for a new day",
+            "type": "shell",
+            "command": "go run cmd/* template -d ${input:day}",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "day",
+            "description": "Enter day number",
+            "type": "promptString"
         }
     ]
 }

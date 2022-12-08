@@ -26,6 +26,7 @@ var app = &cli.App{
 	Commands: []*cli.Command{
 		getCliCmd,
 		submitCliCmd,
+		templateCliCmd,
 	},
 }
 
@@ -58,6 +59,15 @@ var submitCliCmd = &cli.Command{
 				day,
 				part,
 			})
+	},
+}
+
+var templateCliCmd = &cli.Command{
+	Name:  "template",
+	Usage: "Prepare files for a new day",
+	Flags: []cli.Flag{dayFlag},
+	Action: func(ctx *cli.Context) error {
+		return CreateFromTemplate(day)
 	},
 }
 

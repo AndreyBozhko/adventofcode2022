@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -111,5 +113,33 @@ func SubmitAnswer(ans string, r *SubmissionRequest) error {
 	}
 
 	log.Println(success)
+	return nil
+}
+
+func CreateFromTemplate(day int) error {
+	name := fmt.Sprintf("day%02d", day)
+	if err := os.Mkdir(name, 0777); err != nil {
+		return err
+	}
+
+	// test file
+	content, err := os.ReadFile("template/template_test.go")
+	if err != nil {
+		return err
+	}
+	if err = os.WriteFile(name+"/"+name+"_test.go", content, 0644); err != nil {
+		return err
+	}
+
+	// source file
+	content, err = os.ReadFile("template/template.go")
+	if err != nil {
+		return err
+	}
+	content = bytes.ReplaceAll(content, []byte("-1_234"), []byte(strconv.Itoa(day)))
+	if err = os.WriteFile(name+"/"+name+".go", content, 0644); err != nil {
+		return err
+	}
+
 	return nil
 }
