@@ -30,9 +30,18 @@ func (h *Heap) Pop() any {
 	return x
 }
 
-func solve(lines []string, queue Heap) int {
+func solve(lines []string, isStart func(c rune) bool) int {
 	input := make([]string, 0, len(lines))
 	input = append(input, lines...)
+
+	queue := Heap(make([]Point, 0))
+	for x, line := range input {
+		for y, c := range line {
+			if isStart(c) {
+				heap.Push(&queue, Point{X: x, Y: y, Steps: 0})
+			}
+		}
+	}
 
 	visited := make(map[Point]bool)
 
@@ -116,19 +125,15 @@ func solveA(input []string) int {
 		}
 	}
 
-	return solve(input, queue)
+	return solve(input, func(c rune) bool {
+		return c == 'S'
+	})
 }
 
 func solveB(input []string) int {
-	queue := Heap(make([]Point, 0))
-	for x, line := range input {
-		for y, c := range line {
-			if c == 'a' || c == 'S' {
-				heap.Push(&queue, Point{X: x, Y: y, Steps: 0})
-			}
-		}
-	}
-	return solve(input, queue)
+	return solve(input, func(c rune) bool {
+		return c == 'S' || c == 'a'
+	})
 }
 
 func main() {
