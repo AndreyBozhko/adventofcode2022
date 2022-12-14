@@ -77,3 +77,14 @@ func ReverseSlice[T Arbitrary](s []T) {
 		s[i], s[j] = s[j], s[i]
 	}
 }
+
+func Signum(i int) int {
+	switch {
+	case i > 0:
+		return 1
+	case i < 0:
+		return -1
+	default:
+		return 0
+	}
+}

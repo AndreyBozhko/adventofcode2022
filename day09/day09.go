@@ -10,22 +10,11 @@ type Point struct {
 	x, y int
 }
 
-func signum(i int) int {
-	switch {
-	case i > 0:
-		return 1
-	case i < 0:
-		return -1
-	default:
-		return 0
-	}
-}
-
 func (t *Point) MoveTowards(h Point) {
 	dx, dy := h.x-t.x, h.y-t.y
 	if dx*dx > 1 || dy*dy > 1 {
-		t.x += signum(dx)
-		t.y += signum(dy)
+		t.x += utils.Signum(dx)
+		t.y += utils.Signum(dy)
 	}
 }
 
