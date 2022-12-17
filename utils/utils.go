@@ -78,6 +78,8 @@ func ReverseSlice[T Arbitrary](s []T) {
 	}
 }
 
+// Signum returns an int that represents
+// the sign of the argument.
 func Signum(i int) int {
 	switch {
 	case i > 0:
@@ -89,6 +91,8 @@ func Signum(i int) int {
 	}
 }
 
+// Abs returns an absolute value
+// of the argument.
 func Abs(val int) int {
 	if val < 0 {
 		return -val
