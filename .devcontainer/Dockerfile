@@ -20,7 +20,8 @@ USER ${USERNAME}
 
 RUN go install -v honnef.co/go/tools/cmd/staticcheck@latest \
     && go install -v github.com/go-delve/delve/cmd/dlv@latest \
-    && go install -v golang.org/x/tools/gopls@latest
+    && go install -v golang.org/x/tools/gopls@latest \
+    && go install -v github.com/cweill/gotests/gotests@latest
 
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 COPY zshrc /home/$USERNAME/.zshrc
