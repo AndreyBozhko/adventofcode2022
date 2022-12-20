@@ -2,7 +2,6 @@ package main
 
 import (
 	"adventofcode2022/utils"
-	"errors"
 	"fmt"
 	"math"
 	"strconv"
@@ -16,18 +15,6 @@ const (
 )
 
 type cost [4]int
-
-func (c *cost) Allocate(r cost) (cost, error) {
-	res := cost{}
-	if c[clay] < r[clay] || c[ore] < r[ore] || c[obsidian] < r[obsidian] {
-		return cost{}, errors.New("not enough")
-	}
-
-	res[clay] = c[clay] - r[clay]
-	res[ore] = c[ore] - r[ore]
-	res[obsidian] = c[obsidian] - r[obsidian]
-	return res, nil
-}
 
 func (c *cost) NextAvailable(r cost, robots [4]int) (cost, int) {
 	res := *c
@@ -62,7 +49,11 @@ type blueprint struct {
 	OreRobot, ClayRobot, ObsidianRobot, GeodeRobot cost
 }
 
-func countGeodes(b blueprint, timeLimit int, resources cost, robotsTotal [4]int) int {
+func countGeodes(b blueprint, timeLimit int, resources cost, robotsTotal [4]int, best []int) int {
+
+	if robotsTotal[geode] > best[timeLimit] {
+		best[timeLimit] = robotsTotal[geode]
+	}
 
 	if timeLimit <= 0 {
 		return resources[geode]
@@ -70,30 +61,30 @@ func countGeodes(b blueprint, timeLimit int, resources cost, robotsTotal [4]int)
 
 	g := 0
 
-	if newResources, delta := resources.NextAvailable(b.GeodeRobot, robotsTotal); delta < timeLimit {
+	if newResources, delta := resources.NextAvailable(b.GeodeRobot, robotsTotal); delta < timeLimit && robotsTotal[geode]+1 >= best[timeLimit-delta] {
 		robotsTotal[geode]++
-		if res := countGeodes(b, timeLimit-delta-1, newResources, robotsTotal); res > g {
+		if res := countGeodes(b, timeLimit-delta-1, newResources, robotsTotal, best); res > g {
 			g = res
 		}
 		robotsTotal[geode]--
 	}
-	if newResources, delta := resources.NextAvailable(b.ObsidianRobot, robotsTotal); delta < timeLimit {
+	if newResources, delta := resources.NextAvailable(b.ObsidianRobot, robotsTotal); delta < timeLimit && robotsTotal[geode] >= best[timeLimit-delta] {
 		robotsTotal[obsidian]++
-		if res := countGeodes(b, timeLimit-delta-1, newResources, robotsTotal); res > g {
+		if res := countGeodes(b, timeLimit-delta-1, newResources, robotsTotal, best); res > g {
 			g = res
 		}
 		robotsTotal[obsidian]--
 	}
-	if newResources, delta := resources.NextAvailable(b.ClayRobot, robotsTotal); delta < timeLimit {
+	if newResources, delta := resources.NextAvailable(b.ClayRobot, robotsTotal); delta < timeLimit && robotsTotal[geode] >= best[timeLimit-delta] {
 		robotsTotal[clay]++
-		if res := countGeodes(b, timeLimit-delta-1, newResources, robotsTotal); res > g {
+		if res := countGeodes(b, timeLimit-delta-1, newResources, robotsTotal, best); res > g {
 			g = res
 		}
 		robotsTotal[clay]--
 	}
-	if newResources, delta := resources.NextAvailable(b.OreRobot, robotsTotal); delta < timeLimit {
+	if newResources, delta := resources.NextAvailable(b.OreRobot, robotsTotal); delta < timeLimit && robotsTotal[geode] >= best[timeLimit-delta] {
 		robotsTotal[ore]++
-		if res := countGeodes(b, timeLimit-delta-1, newResources, robotsTotal); res > g {
+		if res := countGeodes(b, timeLimit-delta-1, newResources, robotsTotal, best); res > g {
 			g = res
 		}
 		robotsTotal[ore]--
@@ -131,8 +122,8 @@ func solveA(input []string) int {
 	blueprints := parseBlueprints(input)
 
 	for idx, b := range blueprints {
-		total += (idx + 1) * countGeodes(b, 24, cost{}, [4]int{1, 0, 0, 0})
-		println("Done:", idx+1)
+		limit := 24
+		total += (idx + 1) * countGeodes(b, limit, cost{}, [4]int{1, 0, 0, 0}, make([]int, limit+1))
 	}
 
 	return total
@@ -146,9 +137,9 @@ func solveB(input []string) int {
 		blueprints = blueprints[:3]
 	}
 
-	for idx, b := range blueprints {
-		total *= countGeodes(b, 32, cost{}, [4]int{1, 0, 0, 0})
-		println("Done:", idx+1)
+	for _, b := range blueprints {
+		limit := 32
+		total *= countGeodes(b, limit, cost{}, [4]int{1, 0, 0, 0}, make([]int, limit+1))
 	}
 
 	return total
