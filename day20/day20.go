@@ -5,170 +5,105 @@ import (
 	"strconv"
 )
 
-type El struct {
+type Element struct {
 	value      int
-	Prev, Next *El
+	Prev, Next *Element
+}
+
+type LinkedList struct {
+	data []*Element
+}
+
+func parseInput(input []string, factor int) LinkedList {
+	ll := LinkedList{}
+
+	root := (*Element)(nil)
+	tail := (*Element)(nil)
+
+	for _, line := range input {
+		if line == "" {
+			continue
+		}
+
+		value := utils.Must(strconv.Atoi(line))
+		cur := &Element{value: value * factor}
+
+		if root == nil {
+			root = cur
+			tail = cur
+		} else {
+			tail.Next = cur
+			cur.Prev = tail
+			tail = cur
+		}
+		ll.data = append(ll.data, cur)
+	}
+	tail.Next = root
+	root.Prev = tail
+
+	return ll
+}
+
+func (lst LinkedList) Mix() {
+	length := len(lst.data)
+
+	for _, el := range lst.data {
+		v := el.value
+		if v == 0 {
+			continue
+		}
+
+		v %= (length - 1)
+		if v < 0 {
+			v += length - 1
+		}
+
+		cur := el
+		el.Prev.Next = el.Next
+		el.Next.Prev = el.Prev
+
+		for jj := 0; jj < v; jj++ {
+			cur = cur.Next
+		}
+
+		nei := cur.Next
+		cur.Next = el
+		el.Prev = cur
+		el.Next = nei
+		nei.Prev = el
+	}
+}
+
+func solve(lst LinkedList, attempts int) int {
+
+	for attempt := 0; attempt < attempts; attempt++ {
+		lst.Mix()
+	}
+
+	cur := lst.data[0]
+	for cur.value != 0 {
+		cur = cur.Next
+	}
+
+	total := 0
+	for ii := 1; ii <= 3000; ii++ {
+		cur = cur.Next
+		if ii%1000 == 0 {
+			total += cur.value
+		}
+	}
+
+	return total
 }
 
 func solveA(input []string) int {
-	root := (*El)(nil)
-	tail := (*El)(nil)
-
-	elements := make([]*El, 0)
-
-	for _, line := range input {
-		if line == "" {
-			continue
-		}
-
-		value := utils.Must(strconv.Atoi(line))
-		cur := &El{value: value}
-
-		if root == nil {
-			root = cur
-			tail = cur
-		} else {
-			tail.Next = cur
-			cur.Prev = tail
-			tail = cur
-		}
-		elements = append(elements, cur)
-	}
-	tail.Next = root
-	root.Prev = tail
-
-	length := len(elements)
-
-	for _, el := range elements {
-		vv := el.value
-		if vv == 0 {
-			continue
-		}
-		vv %= (length - 1)
-
-		if el.value > 0 {
-			cur := el
-			el.Prev.Next = el.Next
-			el.Next.Prev = el.Prev
-			for jj := 0; jj < el.value; jj++ {
-				cur = cur.Next
-			}
-			nei := cur.Next
-			cur.Next = el
-			el.Prev = cur
-			el.Next = nei
-			nei.Prev = el
-		} else if el.value < 0 {
-			cur := el
-			el.Prev.Next = el.Next
-			el.Next.Prev = el.Prev
-			for jj := 0; jj > el.value; jj-- {
-				cur = cur.Prev
-			}
-			nei := cur.Prev
-			cur.Prev = el
-			el.Next = cur
-			el.Prev = nei
-			nei.Next = el
-		}
-	}
-
-	cur := root
-	for cur.value != 0 {
-		cur = cur.Next
-	}
-
-	total := 0
-	for ii := 1; ii <= 3000; ii++ {
-		cur = cur.Next
-		if ii%1000 == 0 {
-			total += cur.value
-		}
-	}
-
-	return total
+	lst := parseInput(input, 1)
+	return solve(lst, 1)
 }
 
 func solveB(input []string) int {
-	root := (*El)(nil)
-	tail := (*El)(nil)
-
-	elements := make([]*El, 0)
-
-	for _, line := range input {
-		if line == "" {
-			continue
-		}
-
-		value := utils.Must(strconv.Atoi(line))
-		cur := &El{value: value * 811589153}
-
-		if root == nil {
-			root = cur
-			tail = cur
-		} else {
-			tail.Next = cur
-			cur.Prev = tail
-			tail = cur
-		}
-		elements = append(elements, cur)
-	}
-	tail.Next = root
-	root.Prev = tail
-
-	length := len(elements)
-
-	for attempt := 0; attempt < 10; attempt++ {
-		println("Attempt", attempt)
-		for _, el := range elements {
-			vv := el.value
-			if vv == 0 {
-				continue
-			}
-			vv %= (length - 1)
-
-			if el.value > 0 {
-				cur := el
-				el.Prev.Next = el.Next
-				el.Next.Prev = el.Prev
-				for jj := 0; jj < vv; jj++ {
-					cur = cur.Next
-				}
-				nei := cur.Next
-				cur.Next = el
-				el.Prev = cur
-				el.Next = nei
-				nei.Prev = el
-			} else if el.value < 0 {
-				cur := el
-				el.Prev.Next = el.Next
-				el.Next.Prev = el.Prev
-				for jj := 0; jj > vv; jj-- {
-					cur = cur.Prev
-				}
-				nei := cur.Prev
-				cur.Prev = el
-				el.Next = cur
-				el.Prev = nei
-				nei.Next = el
-			}
-		}
-	}
-
-	cur := root
-	for cur.value != 0 {
-		cur = cur.Next
-	}
-
-	total := 0
-	for ii := 1; ii <= 3000; ii++ {
-		cur = cur.Next
-		if ii%1000 == 0 {
-			total += cur.value
-		}
-	}
-
-	return total
+	lst := parseInput(input, 811589153)
+	return solve(lst, 10)
 }
 
 func main() {
@@ -186,5 +121,3 @@ func main() {
 
 	_ = problem.WriteOutput(strconv.Itoa(result))
 }
-
-// 1 1 5 1 1
