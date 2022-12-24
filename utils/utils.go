@@ -99,3 +99,20 @@ func Abs(val int) int {
 	}
 	return val
 }
+
+// GCD computes greatest common divisor
+// of two numbers.
+func GCD(a, b int) int {
+	for b != 0 {
+		t := b
+		b = a % b
+		a = t
+	}
+	return a
+}
+
+// LCM computes lowest common multiple
+// of two numbers.
+func LCM(a, b int) int {
+	return a * b / GCD(a, b)
+}

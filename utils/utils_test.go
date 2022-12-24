@@ -39,6 +39,36 @@ func TestAbs(t *testing.T) {
 	}
 }
 
+func TestGCD(t *testing.T) {
+	tests := []struct {
+		arg1 int
+		arg2 int
+		want int
+	}{
+		{10, 3, 1},
+		{2, 4, 2},
+		{24, 30, 6},
+	}
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, GCD(tt.arg1, tt.arg2))
+	}
+}
+
+func TestLCM(t *testing.T) {
+	tests := []struct {
+		arg1 int
+		arg2 int
+		want int
+	}{
+		{10, 3, 30},
+		{2, 4, 4},
+		{24, 30, 120},
+	}
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, LCM(tt.arg1, tt.arg2))
+	}
+}
+
 func TestReverseSlice(t *testing.T) {
 	tests := []struct {
 		arg  []int
